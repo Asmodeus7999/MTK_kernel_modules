@@ -1258,11 +1258,13 @@ int connsys_log_init(int conn_type)
 
 		gLogDev[conn_type_mcu] = mcu_handler;
 
+#ifdef CONFIG_MTK_CONNSYS_DEDICATED_LOG_PATH
 		if (conn_type == CONN_DEBUG_TYPE_WIFI) {
 			fw_log_wifi_mcu_register_event_cb();
 		} else if (conn_type == CONN_DEBUG_TYPE_BT) {
 			fw_log_bt_mcu_register_event_cb();
 		}
+#endif
 	}
 
 	return 0;

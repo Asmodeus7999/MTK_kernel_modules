@@ -49,6 +49,13 @@
 
 #include <backend/gpu/mali_kbase_pm_internal.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
 #if IS_ENABLED(CONFIG_MALI_MTK_DEBUG)
 #include <platform/mtk_platform_common/mtk_platform_debug.h>
 #endif

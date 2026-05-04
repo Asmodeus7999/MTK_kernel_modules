@@ -1,3 +1,19 @@
+ifeq ($(KERNELRELEASE),)
+extra_symbols := $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/common/Module.symvers)
+extra_symbols += $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/conninfra/Module.symvers)
+extra_symbols += $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/wlan/adaptor/Module.symvers)
+
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(extra_symbols)"
+
+modules_install:
+	$(MAKE) M=$(M) -C $(KERNEL_SRC) modules_install
+
+clean:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean
+
+else
+KO_CODE_PATH := $(if $(filter /%,$(src)),,$(srctree)/)$(src)
 ccflags-y :=
 ifeq ($(CONFIG_MTK_PLATFORM),)
 CONFIG_MTK_PLATFORM := mt$(WLAN_CHIP_ID)
@@ -487,13 +503,13 @@ MODULE_NAME := wlan_$(shell echo $(strip $(WLAN_CHIP_ID)) | tr A-Z a-z)_$(CONFIG
 endif
 
 ccflags-y += -DDBG=0
-ccflags-y += -I$(src)/os -I$(src)/os/$(os)/include
-ccflags-y += -I$(src)/include -I$(src)/include/nic -I$(src)/include/mgmt -I$(src)/include/chips
+ccflags-y += -I$(KO_CODE_PATH)/os -I$(KO_CODE_PATH)/os/$(os)/include
+ccflags-y += -I$(KO_CODE_PATH)/include -I$(KO_CODE_PATH)/include/nic -I$(KO_CODE_PATH)/include/mgmt -I$(KO_CODE_PATH)/include/chips
 ifeq ($(CONFIG_MTK_WIFI_NAN), y)
-ccflags-y += -I$(src)/include/nan -I$(src)/include/nan/wpa_supp
+ccflags-y += -I$(KO_CODE_PATH)/include/nan -I$(KO_CODE_PATH)/include/nan/wpa_supp
 endif
 ifeq ($(CFG_SUPPORT_WIFI_SYSDVT), 1)
-ccflags-y += -I$(src)/include/dvt
+ccflags-y += -I$(KO_CODE_PATH)/include/dvt
 endif
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/base/power/include/
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/
@@ -515,22 +531,22 @@ ccflags-y += -DCFG_MTK_MDDP_SUPPORT=0
 endif
 
 ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), sdio)
-ccflags-y += -I$(src)/os/$(os)/hif/sdio/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/sdio/include
 else ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), pcie)
-ccflags-y += -I$(src)/os/$(os)/hif/common/include
-ccflags-y += -I$(src)/os/$(os)/hif/pcie/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/common/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/pcie/include
 ifneq ($(findstring 3_0,$(MTK_COMBO_CHIP)),)
-ccflags-y += -I$(src)/include/chips/coda/soc3_0
+ccflags-y += -I$(KO_CODE_PATH)/include/chips/coda/soc3_0
 endif
 else ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), axi)
-ccflags-y += -I$(src)/os/$(os)/hif/common/include
-ccflags-y += -I$(src)/os/$(os)/hif/axi/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/common/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/axi/include
 else ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), usb)
-ccflags-y += -I$(src)/os/$(os)/hif/usb/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/usb/include
 else ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), ut)
-ccflags-y += -I$(src)/test -I$(src)/test/lib/include -I$(src)/test/testcases -I$(src)/test/lib/hif
+ccflags-y += -I$(KO_CODE_PATH)/test -I$(KO_CODE_PATH)/test/lib/include -I$(KO_CODE_PATH)/test/testcases -I$(KO_CODE_PATH)/test/lib/hif
 else ifeq ($(CONFIG_MTK_COMBO_WIFI_HIF), none)
-ccflags-y += -I$(src)/os/$(os)/hif/none/include
+ccflags-y += -I$(KO_CODE_PATH)/os/$(os)/hif/none/include
 endif
 
 ifneq ($(PLATFORM_FLAGS), )
@@ -866,7 +882,7 @@ endif
 # ---------------------------------------------------
 ifneq ($(PLAT_DIR),)
 
-PLAT_PRIV_C = $(src)/$(PLAT_DIR)plat_priv.c
+PLAT_PRIV_C = $(KO_CODE_PATH)/$(PLAT_DIR)plat_priv.c
 
 # search path (out of kernel tree)
 IS_EXIST_PLAT_PRIV_C := $(wildcard $(PLAT_PRIV_C))
@@ -904,10 +920,10 @@ endif
 ifeq ($(MTK_WLAN_SERVICE), yes)
 ccflags-y += -DCONFIG_WLAN_SERVICE=1
 ccflags-y += -DCONFIG_TEST_ENGINE_OFFLOAD=1
-ccflags-y += -I$(src)/$(SERVICE_DIR)include
-ccflags-y += -I$(src)/$(SERVICE_DIR)service/include
-ccflags-y += -I$(src)/$(SERVICE_DIR)glue/osal/include
-ccflags-y += -I$(src)/$(SERVICE_DIR)glue/hal/include
+ccflags-y += -I$(KO_CODE_PATH)/$(SERVICE_DIR)include
+ccflags-y += -I$(KO_CODE_PATH)/$(SERVICE_DIR)service/include
+ccflags-y += -I$(KO_CODE_PATH)/$(SERVICE_DIR)glue/osal/include
+ccflags-y += -I$(KO_CODE_PATH)/$(SERVICE_DIR)glue/hal/include
 $(info $$CCFLAG is [{$(ccflags-y)}])
 SERVICE_OBJS := $(SERVICE_DIR)agent/agent.o \
                 $(SERVICE_DIR)service/service_test.o \
@@ -933,5 +949,6 @@ $(MODULE_NAME)-objs  += $(NAN_OBJS)
 $(MODULE_NAME)-objs  += $(NAN_SEC_OBJS)
 
 ifneq ($(findstring UT_TEST_MODE,$(MTK_COMBO_CHIP)),)
-include $(src)/test/ut.make
+include $(KO_CODE_PATH)/test/ut.make
+endif
 endif

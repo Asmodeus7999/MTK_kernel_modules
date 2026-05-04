@@ -27,6 +27,13 @@
 #include <device/mali_kbase_device.h>
 #include <linux/delay.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
 #if IS_ENABLED(CONFIG_MALI_MTK_DEBUG)
 #include <mtk_gpufreq.h>
 #include <platform/mtk_platform_common.h>

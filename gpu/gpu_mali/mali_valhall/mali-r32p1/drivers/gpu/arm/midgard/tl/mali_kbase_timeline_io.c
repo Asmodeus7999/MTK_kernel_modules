@@ -27,6 +27,13 @@
 #include <linux/delay.h>
 #include <linux/poll.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
 /* The timeline stream file operations functions. */
 static ssize_t kbasep_timeline_io_read(struct file *filp, char __user *buffer,
 				       size_t size, loff_t *f_pos);

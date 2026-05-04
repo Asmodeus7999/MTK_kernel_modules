@@ -40,6 +40,13 @@
 #include <linux/kernel.h>
 #include <linux/cache.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
 #if !MALI_USE_CSF
 /**
  * DOC: This file implements the logic behind software only jobs that are

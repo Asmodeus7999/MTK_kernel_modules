@@ -48,6 +48,13 @@
 #include <mali_kbase_trace_gpu_mem.h>
 #include <mali_kbase_reset_gpu.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
 #if IS_ENABLED(CONFIG_MTK_IOMMU_V2)
 #include <asm/cacheflush.h>
 static DEFINE_MUTEX(ion_config_lock);

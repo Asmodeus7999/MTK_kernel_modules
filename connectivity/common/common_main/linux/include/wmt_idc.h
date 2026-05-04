@@ -52,6 +52,20 @@ typedef enum {
 } WMT_IDC_RX_OPCODE;
 
 #if (CFG_WMT_LTE_ENABLE_MSGID_MAPPING == 0)
+/*
+ * IPC message ID base values - normally provided by LTE modem IPC headers.
+ * Defined here as fallback when message ID mapping is disabled.
+ */
+#ifndef IPC_L4C_MSG_ID_BEGIN
+#define IPC_L4C_MSG_ID_BEGIN	0
+#endif
+#ifndef IPC_EL1_MSG_ID_BEGIN
+#define IPC_EL1_MSG_ID_BEGIN	2
+#endif
+#ifndef IPC_EL1_MSG_ID_RANGE	
+#define IPC_EL1_MSG_ID_RANGE	40
+#endif
+
 typedef enum {
 	IPC_L4C_MSG_ID_INVALID = IPC_L4C_MSG_ID_BEGIN,
 	IPC_L4C_MSG_ID_END,

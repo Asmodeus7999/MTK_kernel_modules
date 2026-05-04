@@ -1,3 +1,18 @@
+ifeq ($(KERNELRELEASE),)
+extra_symbols := $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/common/Module.symvers)
+extra_symbols += $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/conninfra/Module.symvers)
+
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(extra_symbols)"
+
+modules_install:
+	$(MAKE) M=$(M) -C $(KERNEL_SRC) modules_install
+
+clean:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean
+
+else
+KO_CODE_PATH := $(if $(filter /%,$(src)),,$(srctree)/)$(src)
 ###############################################################################
 # Bluetooth character device driver
 
@@ -58,7 +73,7 @@ ccflags-y += -I$(WMT_SRC_FOLDER)/common_main/linux/include
 ifneq ($(CONFIG_MTK_CONNSYS_DEDICATED_LOG_PATH),)
 ccflags-y += -I$(WMT_SRC_FOLDER)/debug_utility
 endif
-ccflags-y += -I$(src)/../include/btif
+ccflags-y += -I$(KO_CODE_PATH)/../include/btif
 
 ###############################################################################
 
@@ -71,4 +86,6 @@ $(MODULE_NAME)-objs += stp_chrdev_bt.o
 $(MODULE_NAME)-objs += btmtk_dbg.o btmtk_dbg_tp_evt_if.o
 ifneq ($(CONFIG_MTK_CONNSYS_DEDICATED_LOG_PATH),)
 $(MODULE_NAME)-objs += fw_log_bt.o
+endif
+
 endif
